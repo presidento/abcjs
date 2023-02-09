@@ -16,7 +16,7 @@ module.exports = (env = {} , argv) => {
         },
         libraryTarget: 'umd',
         globalObject: 'this',
-        filename: argv.mode === 'development' ? `abcjs-${type}.js` : `abcjs-${type}-min.js`,
+        filename: argv.mode === 'development' ? `abcjs-${type}.js` : `abcjs-${type}-min-${pkg.version}.js`,
       },
       devtool: argv.mode === 'development' ? 'source-map' : false,
       module: {
