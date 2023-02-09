@@ -8,6 +8,7 @@ module.exports = (env = {} , argv) => {
     const config = {
       target: ['web', 'es5'],
       output: {
+        hashFunction: "xxhash64",
         library: {
           amd: 'abcjs',
           root: 'ABCJS',
