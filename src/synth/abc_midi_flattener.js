@@ -32,7 +32,7 @@ var pitchesToPerc = require('./pitches-to-perc');
 	var chordSourceTrack;
 	var chordTrackFinished;
 	var chordChannel;
-	var chordInstrument = 0;
+	var chordInstrument = 94;
 	var drumInstrument = 128;
 	var boomVolume = 64;
 	var chickVolume = 48;
@@ -87,8 +87,8 @@ var pitchesToPerc = require('./pitches-to-perc');
 		chordChannel = voices.length; // first free channel for chords
 		chordTrackFinished = false;
 		currentChords = [];
-		boomVolume = 64;
-		chickVolume = 48;
+		boomVolume = 48;
+		chickVolume = 24;
 		lastChord = undefined;
 		chordLastBar = undefined;
 		gChordTacet = options.chordsOff ? true : false;
@@ -1013,7 +1013,7 @@ var pitchesToPerc = require('./pitches-to-perc');
 	function writeBoom(boom, beatLength, volume, beat, noteLength) {
 		// undefined means there is a stop time.
 		if (boom !== undefined)
-			chordTrack.push({cmd: 'note', pitch: boom, volume: volume, start: lastBarTime+beat*durationRounded(beatLength), duration: durationRounded(noteLength), gap: 0, instrument: chordInstrument});
+			chordTrack.push({cmd: 'note', pitch: boom, volume: volume, start: lastBarTime+beat*durationRounded(beatLength), duration: durationRounded(noteLength), gap: 0, instrument: 36});
 	}
 
 	function writeChick(chick, beatLength, volume, beat, noteLength) {
@@ -1035,13 +1035,13 @@ var pitchesToPerc = require('./pitches-to-perc');
 		var num = meter.num;
 		var den = meter.den;
 		var beatLength = 1/den;
-		var noteLength = beatLength/2;
+		var noteLength = beatLength;
 		var pattern = rhythmPatterns[num+'/'+den];
 		var thisMeasureLength = parseInt(num,10)/parseInt(den,10);
 		var portionOfAMeasure = thisMeasureLength - (endTime-startTime)/tempoChangeFactor;
 		if (Math.abs(portionOfAMeasure) < 0.00001)
 			portionOfAMeasure = false;
-		if (!pattern || portionOfAMeasure) { // If it is an unsupported meter, or this isn't a full bar, just chick on each beat.
+		if (true || !pattern || portionOfAMeasure) { // If it is an unsupported meter, or this isn't a full bar, just chick on each beat.
 			pattern = [];
 			var beatsPresent = ((endTime-startTime)/tempoChangeFactor) / beatLength;
 			for (var p = 0; p < beatsPresent; p++)
@@ -1068,6 +1068,7 @@ var pitchesToPerc = require('./pitches-to-perc');
 							break;
 						case 'chick':
 							writeChick(currentChords[0].chord.chick, beatLength, chickVolume, m, noteLength);
+							writeBoom(currentChords[0].chord.boom, beatLength, boomVolume, m, noteLength);
 							break;
 					}
 				}
@@ -1119,6 +1120,7 @@ var pitchesToPerc = require('./pitches-to-perc');
 						break;
 					case 'chick':
 						writeChick(thisChord.chord.chick, beatLength, chickVolume, m2, noteLength);
+						writeBoom(thisChord.chord.boom, beatLength, boomVolume, m2, noteLength);
 						break;
 					case '':
 						if (beats['' + m2])	// If there is an explicit chord on this beat, play it.
